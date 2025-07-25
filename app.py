@@ -142,12 +142,13 @@ if st.checkbox("📂 Show & Download Predictions"):
 st.markdown("---")
 st.markdown(
     """
-    <div style="font-size: 13px; color: #ccc;">
-        Built with ❤️ using Streamlit • Based on WHO BMI classification<br>
-        Created by <b>Tolulope Emuleomo</b> aka <b>Data Professor</b> 🧠<br>
-        🔗 <a href="https://twitter.com/dataprofessor_" target="_blank">Twitter: @dataprofessor_</a> •
-        <a href="https://github.com/dataprofessor290" target="_blank">GitHub: dataprofessor290</a><br>
-        💼 Data Scientist
+    <div style="font-size: 13px; color: #999999; text-align: center;">
+        Built with ❤️ using <a href="https://streamlit.io" target="_blank" style="color: #1f77b4;">Streamlit</a><br>
+        Based on WHO BMI classification<br><br>
+        Created by <strong>Tolulope Emuleomo</strong> aka <strong>Data Professor</strong> 🧠<br>
+        🔗 <a href="https://twitter.com/dataprofessor_" target="_blank" style="color: #1DA1F2;">@dataprofessor_</a> |
+        <a href="https://github.com/dataprofessor290" target="_blank" style="color: #6e5494;">GitHub</a><br>
+        💼 <span style="color: #cccccc;">Data Scientist</span>
     </div>
     """,
     unsafe_allow_html=True
