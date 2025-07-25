@@ -7,11 +7,11 @@ from sklearn.model_selection import train_test_split
 # =============================
 # 🚀 Load Model and Dataset
 # =============================
-model = joblib.load("hypertension_model_v2.pkl") 
+model = joblib.load("hypertension_model_v2.pkl")  # Make sure this file is in the same directory
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv("dataset.csv")
+    df = pd.read_csv("dataset.csv")  # Ensure the CSV is in the project folder
     df.columns = df.columns.str.lower().str.strip()
     df["medication"] = df["medication"].fillna("None")
     df["has_hypertension"] = df["has_hypertension"].replace({"Yes": 1, "No": 0})
@@ -137,13 +137,18 @@ if st.checkbox("📂 Show & Download Predictions"):
     )
 
 # =============================
-# 🧾 Footer
+# 📝 Footer
 # =============================
-st.markdown("""<hr style='border-top: 1px solid #555;'>""", unsafe_allow_html=True)
-st.markdown("""
-    <div style='text-align: center; font-size: 0.9em; color: #95A5A6; padding: 10px;'>
-        Made with ❤️ by <b style='color: #EC7063;'>Tolulope Emuleomo</b><br>
-        <span>Data Scientist | Healthcare Analyst</span><br><br>
-        <i>“Empowering healthcare through data-driven insights.”</i>
+st.markdown("---")
+st.markdown(
+    """
+    <div style="font-size: 13px; color: #ccc;">
+        Built with ❤️ using Streamlit • Based on WHO BMI classification<br>
+        Created by <b>Tolulope Emuleomo</b> aka <b>Data Professor</b> 🧠<br>
+        🔗 <a href="https://twitter.com/dataprofessor_" target="_blank">Twitter: @dataprofessor_</a> •
+        <a href="https://github.com/dataprofessor290" target="_blank">GitHub: dataprofessor290</a><br>
+        💼 Data Scientist
     </div>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
