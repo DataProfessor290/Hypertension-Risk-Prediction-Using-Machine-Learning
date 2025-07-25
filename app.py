@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 # =============================
 # 🚀 Load Model and Dataset
 # =============================
-model = joblib.load("hypertension_xgboost_model_test.pkl")  # Your full pipeline
+model = joblib.load("hypertension_model_v2.pkl") 
 
 @st.cache_data
 def load_data():
