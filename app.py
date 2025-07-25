@@ -5,9 +5,9 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 # =============================
-# 🚀 Load model and dataset
+# 🚀 Load Model and Dataset
 # =============================
-model = joblib.load("hypertension_xgboost_model_test.pkl")
+model = joblib.load("hypertension_xgboost_model_test.pkl")  # Your full pipeline
 
 @st.cache_data
 def load_data():
@@ -20,7 +20,7 @@ def load_data():
 df = load_data()
 
 # =============================
-# 🎨 Global Styling - Dark Theme
+# 🎨 Global Styling - Dark Mode
 # =============================
 st.set_page_config(page_title="Hypertension Risk Predictor", layout="centered")
 
@@ -80,7 +80,7 @@ bp_history = st.selectbox("💓 Blood Pressure History", ["Normal", "Elevated", 
 # =============================
 input_df = pd.DataFrame({
     "bmi": [bmi],
-    "family_history": [family_history],
+    "family_history": [family_history.lower()],
     "smoking_status": [smoking_status],
     "stress_score": [stress_score],
     "bp_history": [bp_history]
