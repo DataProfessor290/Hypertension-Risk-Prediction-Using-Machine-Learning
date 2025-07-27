@@ -7,10 +7,11 @@ from sklearn.model_selection import train_test_split
 # =============================
 # 🚀 Load Model and Dataset
 # =============================
-model = joblib.load("hypertension_model_v2.pkl")  # Your saved model
+model = joblib.load("hypertension_model_v2.pkl")  # Ensure this file is in the same directory
+
 @st.cache_data
 def load_data():
-    df = pd.read_csv("dataset.csv")
+    df = pd.read_csv("dataset.csv")  # Ensure the CSV is in the project folder
     df.columns = df.columns.str.lower().str.strip()
     df["medication"] = df["medication"].fillna("None")
     df["has_hypertension"] = df["has_hypertension"].replace({"Yes": 1, "No": 0})
@@ -19,7 +20,7 @@ def load_data():
 df = load_data()
 
 # =============================
-# 🎨 Page Config & Styling
+# 🎨 Global Styling - Dark Mode
 # =============================
 st.set_page_config(page_title="Hypertension Risk Predictor", layout="centered")
 
@@ -37,7 +38,7 @@ st.markdown("""
         background-color: #1f77b4;
         color: white;
         border-radius: 6px;
-        padding: 0.4em 1em;
+        padding: 0.6em 1.2em;
     }
     .stDownloadButton>button {
         background-color: #117A65;
@@ -54,42 +55,47 @@ st.markdown("""
 # ⚖️ BMI Calculator in Sidebar
 # =============================
 st.sidebar.header("⚖️ BMI Calculator")
+st.sidebar.markdown("_Don't know your BMI? Calculate it here:_")
 
-with st.sidebar:
-    with st.expander("📘 Don't know your BMI? Calculate it here!", expanded=True):
-        weight = st.number_input("Weight (kg)", min_value=10.0, step=0.5, format="%.1f", help="E.g. 65.0")
-        height = st.number_input("Height (m)", min_value=0.5, step=0.01, format="%.2f", help="E.g. 1.70")
-        calc_bmi = st.button("📏 Calculate BMI")
-        
-        if calc_bmi and height > 0:
-            calculated_bmi = round(weight / (height ** 2), 2)
-            st.success(f"✅ Your BMI is: **{calculated_bmi}**")
-        elif not calc_bmi:
-            calculated_bmi = 25.0  # Default value before user hits button
-        else:
-            calculated_bmi = 25.0
-            st.warning("Please enter a valid height.")
-        
-        st.markdown("💡 _Formula: BMI = weight (kg) ÷ height² (m²)_")
+with st.sidebar.form(key="bmi_form"):
+    weight = st.number_input("Enter your weight (kg) — e.g., 65.0", min_value=10.0, step=0.5, format="%.1f")
+    height = st.number_input("Enter your height (meters) — e.g., 1.70", min_value=0.5, step=0.01, format="%.2f")
+    calc_bmi_button = st.form_submit_button(label="📏 Calculate BMI")
 
-        with st.expander("📚 BMI Classification", expanded=False):
-            st.markdown("""
-            - ⚠️ **Underweight**: BMI < 18.5  
-            - ✅ **Normal**: 18.5 ≤ BMI < 25  
-            - ⚠️ **Overweight**: 25 ≤ BMI < 30  
-            - 🔶 **Obese I**: 30 ≤ BMI < 35  
-            - 🔴 **Obese II**: 35 ≤ BMI < 40  
-            - 🔴 **Obese III**: BMI ≥ 40
-            """)
+if calc_bmi_button and height > 0:
+    calculated_bmi = round(weight / (height ** 2), 2)
+    st.sidebar.success(f"Your BMI is: **{calculated_bmi}**")
+else:
+    calculated_bmi = 25.0
+
+st.sidebar.markdown("\n💡 _BMI = weight (kg) ÷ height² (m²)_")
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 📚 What is BMI?")
+st.sidebar.markdown("""
+**Body Mass Index (BMI)** is a simple number based on your height and weight. It helps you understand if you're underweight, at a healthy weight, overweight, or obese.
+
+- ⚠️ **Underweight**: BMI < 18.5  
+- ✅ **Normal weight**: 18.5 ≤ BMI < 25  
+- ⚠️ **Overweight**: 25 ≤ BMI < 30  
+- 🔶 **Obese Class I**: 30 ≤ BMI < 35  
+- 🔴 **Obese Class II**: 35 ≤ BMI < 40  
+- 🔴 **Obese Class III**: BMI ≥ 40  
+""")
 
 # =============================
-# 🩺 Hypertension Risk Predictor
+# 💡 Header
 # =============================
-st.markdown("<h1 style='text-align: center;'>🯪 Hypertension Risk Predictor</h1>", unsafe_allow_html=True)
-st.markdown("<h5 style='text-align: center; color: #B0BEC5;'>Powered by XGBoost | Built with Streamlit</h5>", unsafe_allow_html=True)
-st.markdown("<hr style='border-top: 1px solid #555;'>", unsafe_allow_html=True)
+st.markdown("""
+<h1 style='text-align: center;'>🩺 Hypertension Risk Predictor</h1>
+<h5 style='text-align: center; color: #B0BEC5;'>Powered by XGBoost | Built with Streamlit</h5>
+<hr style='border-top: 1px solid #555;'>
+""", unsafe_allow_html=True)
 
-st.markdown("### 📝 Patient Information")
+# =============================
+# 🔢 Input Features
+# =============================
+st.markdown("### 🔍 Enter Patient Information:")
 
 col1, col2 = st.columns(2)
 
@@ -104,7 +110,7 @@ with col2:
 bp_history = st.selectbox("💓 Blood Pressure History", ["Normal", "Elevated", "Stage 1", "Stage 2"])
 
 # =============================
-# 🎯 Prediction
+# 🎯 Prediction Logic
 # =============================
 input_df = pd.DataFrame({
     "bmi": [bmi],
@@ -114,59 +120,67 @@ input_df = pd.DataFrame({
     "bp_history": [bp_history]
 })
 
+st.markdown("---")
 st.markdown("### 📊 Prediction Result")
+
 if st.button("🔍 Predict Risk Level"):
     prediction = model.predict(input_df)[0]
     probability = model.predict_proba(input_df)[0][1] * 100
 
     if prediction == 1:
         st.error(f"⚠️ High Risk of Hypertension\n\n**Probability: {probability:.2f}%**")
-        st.markdown("*Please consult a healthcare professional for further advice.*")
+        st.markdown("*Please consult a healthcare professional for further screening.*")
     else:
         st.success(f"✅ Low Risk of Hypertension\n\n**Probability: {probability:.2f}%**")
-        st.markdown("*Great job! Keep maintaining a healthy lifestyle.*")
+        st.markdown("*Keep up your healthy lifestyle!*")
 
 # =============================
-# 🧠 Model Accuracy
+# 📊 Model Performance
 # =============================
-with st.expander("📈 View Model Accuracy", expanded=False):
-    st.subheader("📊 Model Performance on Test Data")
+st.markdown("---")
+st.subheader("📊 Model Accuracy (on Test Set)")
 
-    features = ["bmi", "family_history", "smoking_status", "stress_score", "bp_history"]
-    X = df[features]
-    y = df["has_hypertension"]
-    X_clean = X.dropna()
-    y_clean = y.loc[X_clean.index]
+feature_cols = ["bmi", "family_history", "smoking_status", "stress_score", "bp_history"]
+X = df[feature_cols]
+y = df["has_hypertension"]
+X_clean = X.dropna()
+y_clean = y.loc[X_clean.index]
 
-    X_train, X_test, y_train, y_test = train_test_split(X_clean, y_clean, test_size=0.2, random_state=42)
-    y_pred = model.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
+X_train, X_test, y_train, y_test = train_test_split(X_clean, y_clean, test_size=0.2, random_state=42)
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
 
-    st.metric("Model Accuracy", f"{acc * 100:.2f}%")
-
-# =============================
-# 📥 Download Section
-# =============================
-with st.expander("📂 Download Sample Predictions", expanded=False):
-    result_df = X_test.copy()
-    result_df["Actual"] = y_test.values
-    result_df["Predicted"] = y_pred
-    st.dataframe(result_df.head(10))
-
-    csv_data = result_df.to_csv(index=False).encode("utf-8")
-    st.download_button("📥 Download CSV", data=csv_data, file_name="hypertension_predictions.csv", mime="text/csv")
+st.metric(label="Model Accuracy", value=f"{accuracy * 100:.2f}%")
 
 # =============================
-# 🦶 Footer
+# 📅 Download Section
+# =============================
+if st.checkbox("📂 Show & Download Predictions"):
+    results_df = X_test.copy()
+    results_df["Actual"] = y_test.values
+    results_df["Predicted"] = y_pred
+    st.dataframe(results_df.head(10))
+
+    csv = results_df.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📅 Download Predictions CSV",
+        data=csv,
+        file_name='hypertension_predictions.csv',
+        mime='text/csv'
+    )
+
+# =============================
+# 🗒️ Footer
 # =============================
 st.markdown("---")
 st.markdown("""
-<div style="font-size: 13px; color: #888888; text-align: center;">
-    Built with ❤️ using <a href="https://streamlit.io" target="_blank" style="color:#1f77b4;">Streamlit</a><br>
-    Based on WHO BMI standards<br><br>
-    Created by <strong>Tolulope Emuleomo</strong> (aka <strong>Data Professor</strong>)<br>
-    🔗 <a href="https://twitter.com/dataprofessor_" style="color:#1DA1F2;" target="_blank">@dataprofessor_</a> |
-    <a href="https://github.com/dataprofessor290" style="color:#6e5494;" target="_blank">GitHub</a> |
-    <a href="https://www.linkedin.com/in/tolulope-emuleomo" style="color:#0A66C2;" target="_blank">LinkedIn</a>
-</div>
+    <div style="font-size: 13px; color: #999999; text-align: center;">
+        Built with ❤️ using <a href="https://streamlit.io" target="_blank" style="color: #1f77b4;">Streamlit</a><br>
+        Based on WHO BMI classification<br><br>
+        Created by <strong>Tolulope Emuleomo</strong> aka <strong>Data Professor</strong> 🧠<br>
+        🔗 <a href="https://twitter.com/dataprofessor_" target="_blank" style="color: #1DA1F2;">@dataprofessor_</a> |
+        <a href="https://github.com/dataprofessor290" target="_blank" style="color: #6e5494;">GitHub</a> |
+        <a href="https://www.linkedin.com/in/tolulope-emuleomo" target="_blank" style="color: #0A66C2;">LinkedIn</a><br>
+        💼 <span style="color: #cccccc;">Data Scientist</span>
+    </div>
 """, unsafe_allow_html=True)
