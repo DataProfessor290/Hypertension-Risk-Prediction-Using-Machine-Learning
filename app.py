@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 # =============================
 # 🚀 Load Model and Dataset
 # =============================
-model = joblib.load("hypertension_model_v2.pkl")  # Make sure this file is in the same directory
+model = joblib.load("hypertension_model_v2.pkl")  # Ensure this file is in the same directory
 
 @st.cache_data
 def load_data():
@@ -47,6 +47,9 @@ st.markdown("""
     }
     .stMetricLabel, .stMetricValue {
         color: #F5F5F5 !important;
+    }
+    a {
+        color: #1f77b4;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -143,11 +146,12 @@ st.markdown("---")
 st.markdown(
     """
     <div style="font-size: 13px; color: #999999; text-align: center;">
-        Built with ❤️ using <a href="https://streamlit.io" target="_blank" style="color: #1f77b4;">Streamlit</a><br>
+        Built with ❤️ using <a href="https://streamlit.io" target="_blank">Streamlit</a><br>
         Based on WHO BMI classification<br><br>
         Created by <strong>Tolulope Emuleomo</strong> aka <strong>Data Professor</strong> 🧠<br>
-        🔗 <a href="https://twitter.com/dataprofessor_" target="_blank" style="color: #1DA1F2;">@dataprofessor_</a> |
-        <a href="https://github.com/dataprofessor290" target="_blank" style="color: #6e5494;">GitHub</a><br>
+        🔗 <a href="https://twitter.com/dataprofessor_" target="_blank">@dataprofessor_</a> |
+        <a href="https://github.com/dataprofessor290" target="_blank">GitHub</a> |
+        <a href="https://www.linkedin.com/in/tolulope-emuleomo" target="_blank">LinkedIn</a><br>
         💼 <span style="color: #cccccc;">Data Scientist</span>
     </div>
     """,
